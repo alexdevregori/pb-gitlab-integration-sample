@@ -12,10 +12,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Productboard and GitLab information here
-const pbIntegrationID = ENV["PB_INTEGRATION_ID"]; // Add the Productboard plugin integration ID here
-const productboardToken = "Bearer " + ENV["PB_TOKEN"]; // Add the Productboard API token here to authorize requests
-const gitlabProjectID = ENV["GITLAB_PROJECT_ID"];
-const gitlabToken = ENV["GITLAB_TOKEN"]; // Add your Gitlab token here
+const pbIntegrationID = process.env.PB_INTEGRATION_ID; // Productboard plugin integration ID here
+const productboardToken = "Bearer " + process.env.PB_TOKEN; // Productboard API token here to authorize requests
+const gitlabProjectID = process.env.GITLAB_PROJECT_ID; // GitLab Project ID
+const gitlabToken = process.env.GITLAB_TOKEN; // Gitlab Access token
 
 // Initial route to confirm app is running on Heroku
 app.get("/", (req, res) => {
