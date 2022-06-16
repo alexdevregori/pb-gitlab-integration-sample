@@ -1,3 +1,4 @@
+// Node packages being used
 const express = require("express");
 const bodyParser = require("body-parser"); // Parses JSON bodies
 const cookieParser = require("cookie-parser");
@@ -5,11 +6,12 @@ const app = express().use(bodyParser.text());
 const port = process.env.PORT || 3000;
 const axios = require("axios"); // Helps by sending HTTP for us
 
+// Configuration of our server
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// Productboard and GitLab info here
+// Productboard and GitLab information here
 const pbIntegrationID = ENV["PB_INTEGRATION_ID"]; // Add the Productboard plugin integration ID here
 const productboardToken = "Bearer " + ENV["PB_TOKEN"]; // Add the Productboard API token here to authorize requests
 const gitlabProjectID = ENV["GITLAB_PROJECT_ID"];
@@ -152,8 +154,9 @@ app.post("/plugin", async (req, res) => {
 	}
 });
 
-// Handle updates from Gitlab for status updates in plugin integration column
+// Endpoint for requests from Gitlab for status updates in plugin integration column
 app.post("/gitlab-webhook", async (req, res) => {
+	// Grab information about the GitLab issue
 	const gitlabIssueId = req.body.object_attributes.id;
 	const gitlabIssueStatus = req.body.object_attributes.state;
 	const gitlabIssueURL = req.body.object_attributes.url;
@@ -192,6 +195,7 @@ app.post("/gitlab-webhook", async (req, res) => {
 	// Loop through features in PB to find the right feature based Gitlab issue ID
 	axios(pbIntegrationConfig)
 		.then(function (response) {
+			// Find the right feature to update
 			featureResult = response.data.data.filter((obj) => {
 				return obj.connection.tooltip === pbTooltip;
 			});
@@ -202,6 +206,7 @@ app.post("/gitlab-webhook", async (req, res) => {
 				featureResult.length
 			);
 
+			// Configre the body of the update of the plugin integration column
 			const pbUpdateFromGitlabData = JSON.stringify({
 				data: {
 					connection: {
