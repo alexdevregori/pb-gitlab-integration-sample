@@ -10,21 +10,25 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Productboard and GitLab info here
-const pbIntegrationID = process.env.PB_INTEGRATION_ID; // Add the Productboard plugin integration ID here
-const gitlabToken = process.env.GITLAB_TOKEN; // Add your Gitlab token here
-const productboardToken = process.env.PB_TOKEN; // Add the Productboard API token here to authorize requests
+const pbIntegrationID = ENV["PB_INTEGRATION_ID"]; // Add the Productboard plugin integration ID here
+const productboardToken = "Bearer " + ENV["PB_TOKEN"]; // Add the Productboard API token here to authorize requests
+const gitlabProjectID = ENV["GITLAB_PROJECT_ID"];
+const gitlabToken = ENV["GITLAB_TOKEN"]; // Add your Gitlab token here
 
+// Initial route to confirm app is running on Heroku
 app.get("/", (req, res) => {
 	res.send(
 		"This is a Heroku server hosting our Productboard <> GitLab integration"
 	);
 });
 
+// Route to authenticate plugin connection
 app.get("/plugin", (req, res) => {
 	res.setHeader("Content-type", "text/plain");
 	res.status(200).send(res.req.query.validationToken);
 });
 
+// Optional route if webhooks from Productboard are needed to support a 2-way sync
 app.get("/productboard-webhook", async (req, res) => {
 	res.setHeader("Content-type", "text/plain");
 	res.status(200).send(res.req.query.validationToken);
@@ -69,13 +73,13 @@ app.post("/plugin", async (req, res) => {
 					title: pbFeatureResponse.data.data.name,
 					description:
 						pbFeatureResponse.data.data.description +
-						`<br><strong>Click <a href="${pbFeatureLink}">here</a> to see feature in Productboard</strong>`,
+						`<br><strong>Click <a href="${pbFeatureLink}" target="_blank">here</a> to see feature in Productboard</strong>`,
 				});
 
 				// Setup request to send data to Gitlab
 				const gitlabConfig = {
 					method: "post",
-					url: "https://gitlab.com/api/v4/projects/35858336/issues",
+					url: `https://gitlab.com/api/v4/projects/${gitlabProjectID}/issues`,
 					headers: {
 						"PRIVATE-TOKEN": gitlabToken,
 						"Content-Type": "application/json",
