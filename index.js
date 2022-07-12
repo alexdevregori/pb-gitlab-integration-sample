@@ -14,10 +14,10 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
 // Productboard and GitLab information
-const productboardIntegrationID = process.env.PB_INTEGRATION_ID; // Productboard plugin integration ID
-const productboardToken = "Bearer " + process.env.PB_TOKEN; // Productboard API token to authorize requests
-const gitlabProjectID = process.env.GITLAB_PROJECT_ID; // GitLab Project ID
-const gitlabToken = process.env.GITLAB_TOKEN; // Gitlab Personal Access Token
+const PRODUCTBOARD_INTEGRATION_ID = process.env.PB_INTEGRATION_ID; // Productboard plugin integration ID
+const PRODUCTBOARD_TOKEN = "Bearer " + process.env.PB_TOKEN; // Productboard API token to authorize requests
+const GITLAB_PROJECT_ID = process.env.GITLAB_PROJECT_ID; // GitLab Project ID
+const GITLAB_TOKEN = process.env.GITLAB_TOKEN; // Gitlab Personal Access Token
 
 // Initial route to confirm app is running on Heroku
 app.get("/", (req, res) => {
@@ -137,11 +137,11 @@ function createProductboardPluginIntegrationConnection(featureID, issueID, issue
         },
     });
 
-    return sendProductboardRequest("put", `plugin-integrations/${productboardIntegrationID}/connections/${featureID}`, pbPluginIntegrationData)
+    return sendProductboardRequest("put", `plugin-integrations/${PRODUCTBOARD_INTEGRATION_ID}/connections/${featureID}`, pbPluginIntegrationData)
 }
 
 function getProductboardPluginIntegrationsConnections() {
-    return sendProductboardRequest("get", `plugin-integrations/${productboardIntegrationID}/connections/`)
+    return sendProductboardRequest("get", `plugin-integrations/${PRODUCTBOARD_INTEGRATION_ID}/connections/`)
 }
 
 function updateProductboardPluginIntegrationConnection(featureID, issueID, issueStatus, issueURL) {
@@ -158,7 +158,7 @@ function updateProductboardPluginIntegrationConnection(featureID, issueID, issue
         },
     });
 
-    return sendProductboardRequest("put", `plugin-integrations/${productboardIntegrationID}/connections/${featureID}`, pbPluginIntegrationData)
+    return sendProductboardRequest("put", `plugin-integrations/${PRODUCTBOARD_INTEGRATION_ID}/connections/${featureID}`, pbPluginIntegrationData)
 }
 
 function sendProductboardRequest(method, url, data = undefined) {
@@ -167,7 +167,7 @@ function sendProductboardRequest(method, url, data = undefined) {
         url: `https://api.productboard.com/${url}`,
         headers: {
             "X-Version": "1",
-            "Authorization": productboardToken,
+            "Authorization": PRODUCTBOARD_TOKEN,
             "Content-Type": "application/json"
         },
         data: data
@@ -186,9 +186,9 @@ function createGitlabIssue(title, description) {
 function sendGitlabRequest(method, url, data = undefined) {
     return axios({
         method: method,
-        url: `https://gitlab.com/api/v4/projects/${gitlabProjectID}/${url}`,
+        url: `https://gitlab.com/api/v4/projects/${GITLAB_PROJECT_ID}/${url}`,
         headers: {
-            "PRIVATE-TOKEN": gitlabToken,
+            "PRIVATE-TOKEN": GITLAB_TOKEN,
             "Content-Type": "application/json",
         },
         data: data,
