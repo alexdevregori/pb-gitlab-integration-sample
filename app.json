@@ -1,5 +1,5 @@
 {
   "name": "Productboard <> GitLab integration",
-  "description": "A sample GitLab integration using Node.js app and Express",
+  "description": "A Productboard to GitLab integration using Node.js and Express",
   "keywords": ["node", "express", "axios"]
 }
