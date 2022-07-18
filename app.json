@@ -2,22 +2,4 @@
   "name": "Productboard <> GitLab integration",
   "description": "A sample GitLab integration using Node.js app and Express",
   "keywords": ["node", "express", "axios"],
-  "env": {
-    "GITLAB_TOKEN": {
-      "description": "A secret key for verifying your GitLab access. More info here: https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html",
-      "required": false
-    },
-    "PB_TOKEN": {
-      "description": "Your Productboard API token located in the Integration settings. More info here: https://developer.productboard.com/#section/Authentication/Getting-a-token",
-      "required": false
-    },
-    "GITLAB_PROJECT_ID": {
-      "description": "The ID of the GitLab project you want Productboard features pushed to.",
-      "required": false
-    },
-    "PB_INTEGRATION_ID": {
-      "description": "The ID of your Productboard plugin integration. Located in the response of the POST request sent in Postman. *To be configured after initial app is deployed.",
-      "required": false
-    }
-  }
 }
