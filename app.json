@@ -4,16 +4,20 @@
   "keywords": ["node", "express", "axios"],
   "env": {
     "GITLAB_TOKEN": {
-      "description": "A secret key for verifying your GitLab access."
-    },
-    "PB_INTEGRATION_ID": {
-      "description": "The ID of your Productboard plugin integration. Located in the response of the POST request in Postman."
+      "description": "A secret key for verifying your GitLab access. More info here: https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html",
+      "required": false
     },
     "PB_TOKEN": {
-      "description": "Your Productboard API token located in the Integration settings."
+      "description": "Your Productboard API token located in the Integration settings. More infor here: https://developer.productboard.com/#section/Authentication/Getting-a-token",
+      "required": false
     },
     "GITLAB_PROJECT_ID": {
-      "description": "The ID of your GitLab project that you want Productboard features pushed to."
+      "description": "The ID of the GitLab project that you want Productboard features pushed to.",
+      "required": false
+    },
+    "PB_INTEGRATION_ID": {
+      "description": "The ID of your Productboard plugin integration. Located in the response of the POST request in Postman. *To be configured after initial app is deployed.",
+      "required": false
     }
   }
 }
