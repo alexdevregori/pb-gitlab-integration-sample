@@ -8,15 +8,15 @@
       "required": false
     },
     "PB_TOKEN": {
-      "description": "Your Productboard API token located in the Integration settings. More infor here: https://developer.productboard.com/#section/Authentication/Getting-a-token",
+      "description": "Your Productboard API token located in the Integration settings. More info here: https://developer.productboard.com/#section/Authentication/Getting-a-token",
       "required": false
     },
     "GITLAB_PROJECT_ID": {
-      "description": "The ID of the GitLab project that you want Productboard features pushed to.",
+      "description": "The ID of the GitLab project you want Productboard features pushed to.",
       "required": false
     },
     "PB_INTEGRATION_ID": {
-      "description": "The ID of your Productboard plugin integration. Located in the response of the POST request in Postman. *To be configured after initial app is deployed.",
+      "description": "The ID of your Productboard plugin integration. Located in the response of the POST request sent in Postman. *To be configured after initial app is deployed.",
       "required": false
     }
   }
