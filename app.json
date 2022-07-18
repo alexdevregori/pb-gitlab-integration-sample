@@ -2,8 +2,7 @@
   "name": "Productboard <> GitLab integration",
   "description": "A sample GitLab integration using Node.js app and Express",
   "keywords": ["node", "express", "axios"]
-},
-"env": {
+  "env": {
     "GITLAB_TOKEN": {
       "description": "A secret key for verifying your GitLab access.",
     },
@@ -17,3 +16,4 @@
       "description": "The ID of your GitLab project that you want Productboard features pushed to.",
     },
   }
+}
