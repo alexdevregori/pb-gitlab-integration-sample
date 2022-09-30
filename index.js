@@ -74,7 +74,9 @@ app.post("/plugin", async (req, res) => {
             // Connect feature and issue
             createProductboardPluginIntegrationConnection(pbFeatureID, issueID, issueURL)
               .then((_) => console.log("Productboard feature connected to Gitlab issue."))
-              .catch((error) => console.log("Error when connecting Productboard feature and Gitlab issue:", error));
+              .catch((error) =>
+                console.log("Error when connecting Productboard feature and Gitlab issue:", error)
+              );
           })
           .catch((error) => console.log("Error when creating GitLab issue:", error));
       })
@@ -102,21 +104,49 @@ app.post("/gitlab-webhook", async (req, _) => {
   const gitlabIssueURL = req.body.object_attributes.url;
   console.log(`The Gitlab issue ID is: ${gitlabIssueId} and the state is: ${gitlabIssueStatus}`);
 
+  let pbConnection = undefined;
+  let pbLinksNext = true;
+  let offset = 0;
   // List all plugin integrations connections
-  getProductboardPluginIntegrationsConnections()
-    .then((pbConnectionsResponse) => {
-      // Find the right plugin integration connection -> the tooltip must contain gitlab issue ID
-      const pbConnection = pbConnectionsResponse.data.data.find((connection) => connection.connection.tooltip?.includes(gitlabIssueId));
-      // Check if we found matching connection
-      if (pbConnection) {
-        console.log(`Connected Productboard feature ID is ${pbConnection.featureId}`);
-        // Update the connection with new status
-        updateProductboardPluginIntegrationConnection(pbConnection.featureId, gitlabIssueId, gitlabIssueStatus, gitlabIssueURL)
-          .then((_) => console.log(`Productboard plugin integration connection status is now: ${gitlabIssueStatus} 🚀`))
-          .catch((error) => console.log("Error updating Productboard plugin integration connection", error));
-      }
-    })
-    .catch((error) => console.log("Error getting Productboard plugin integrations connections:", error));
+  while (pbConnection === undefined) {
+    await getProductboardPluginIntegrationsConnections(offset)
+      .then(async (pbConnectionsResponse) => {
+        pbLinksNext = pbConnectionsResponse.data.links.next;
+        console.log(pbConnectionsResponse.data.links.next);
+
+        // Find the right plugin integration connection -> the tooltip must contain gitlab issue ID
+        pbConnection = pbConnectionsResponse.data.data.find((connection) =>
+          connection.connection.tooltip?.includes(gitlabIssueId)
+        );
+        offset += 100;
+
+        // Check if we found matching connection
+        if (pbConnection) {
+          console.log(`Connected Productboard feature ID is ${pbConnection.featureId}`);
+          // Update the connection with new status
+          updateProductboardPluginIntegrationConnection(
+            pbConnection.featureId,
+            gitlabIssueId,
+            gitlabIssueStatus,
+            gitlabIssueURL
+          )
+            .then((_) =>
+              console.log(
+                `Productboard plugin integration connection status is now: ${gitlabIssueStatus} 🚀`
+              )
+            )
+            .catch((error) =>
+              console.log("Error updating Productboard plugin integration connection", error)
+            );
+        }
+      })
+      .catch((error) =>
+        console.log("Error getting Productboard plugin integrations connections:", error)
+      );
+    if (pbLinksNext === null) {
+      break;
+    }
+  }
 });
 
 // Initiating server to listen for requests from PB and GitLab
@@ -144,12 +174,19 @@ function createProductboardPluginIntegrationConnection(featureID, issueID, issue
     },
   });
 
-  return sendProductboardRequest("put", `plugin-integrations/${PRODUCTBOARD_INTEGRATION_ID}/connections/${featureID}`, pbPluginIntegrationData);
+  return sendProductboardRequest(
+    "put",
+    `plugin-integrations/${PRODUCTBOARD_INTEGRATION_ID}/connections/${featureID}`,
+    pbPluginIntegrationData
+  );
 }
 
 // Get specific plugin integration data. More info here: https://developer.productboard.com/#operation/getPluginIntegrationConnection
-function getProductboardPluginIntegrationsConnections() {
-  return sendProductboardRequest("get", `plugin-integrations/${PRODUCTBOARD_INTEGRATION_ID}/connections/`);
+function getProductboardPluginIntegrationsConnections(offset) {
+  return sendProductboardRequest(
+    "get",
+    `plugin-integrations/${PRODUCTBOARD_INTEGRATION_ID}/connections?pageLimit=100&pageOffset=${offset}`
+  );
 }
 
 // Update a plugin integration connection. More info here: https://developer.productboard.com/#operation/putPluginIntegrationConnection
@@ -167,7 +204,11 @@ function updateProductboardPluginIntegrationConnection(featureID, issueID, issue
     },
   });
 
-  return sendProductboardRequest("put", `plugin-integrations/${PRODUCTBOARD_INTEGRATION_ID}/connections/${featureID}`, pbPluginIntegrationData);
+  return sendProductboardRequest(
+    "put",
+    `plugin-integrations/${PRODUCTBOARD_INTEGRATION_ID}/connections/${featureID}`,
+    pbPluginIntegrationData
+  );
 }
 
 // Structure for Axios requests sent to PB API. More info here: https://developer.productboard.com/#section/Introduction
